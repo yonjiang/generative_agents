@@ -17,6 +17,8 @@ from global_methods import *
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from .models import *
 
+work_dir = os.getcwd() + f"/environment/frontend_server/"
+
 def landing(request): 
   context = {}
   template = "landing/landing.html"
@@ -24,8 +26,9 @@ def landing(request):
 
 
 def demo(request, sim_code, step, play_speed="2"): 
-  move_file = f"compressed_storage/{sim_code}/master_movement.json"
-  meta_file = f"compressed_storage/{sim_code}/meta.json"
+
+  move_file = work_dir + f"compressed_storage/{sim_code}/master_movement.json"
+  meta_file = work_dir + f"compressed_storage/{sim_code}/meta.json"
   step = int(step)
   play_speed_opt = {"1": 1, "2": 2, "3": 4,
                     "4": 8, "5": 16, "6": 32}
@@ -103,8 +106,8 @@ def UIST_Demo(request):
 
 
 def home(request):
-  f_curr_sim_code = "temp_storage/curr_sim_code.json"
-  f_curr_step = "temp_storage/curr_step.json"
+  f_curr_sim_code = work_dir + "temp_storage/curr_sim_code.json"
+  f_curr_step = work_dir + "temp_storage/curr_step.json"
 
   if not check_if_file_exists(f_curr_step): 
     context = {}
@@ -121,7 +124,7 @@ def home(request):
 
   persona_names = []
   persona_names_set = set()
-  for i in find_filenames(f"storage/{sim_code}/personas", ""): 
+  for i in find_filenames(work_dir +f"storage/{sim_code}/personas", ""): 
     x = i.split("/")[-1].strip()
     if x[0] != ".": 
       persona_names += [[x, x.replace(" ", "_")]]
@@ -129,11 +132,11 @@ def home(request):
 
   persona_init_pos = []
   file_count = []
-  for i in find_filenames(f"storage/{sim_code}/environment", ".json"):
+  for i in find_filenames(work_dir +f"storage/{sim_code}/environment", ".json"):
     x = i.split("/")[-1].strip()
     if x[0] != ".": 
       file_count += [int(x.split(".")[0])]
-  curr_json = f'storage/{sim_code}/environment/{str(max(file_count))}.json'
+  curr_json = work_dir +f'storage/{sim_code}/environment/{str(max(file_count))}.json'
   with open(curr_json) as json_file:  
     persona_init_pos_dict = json.load(json_file)
     for key, val in persona_init_pos_dict.items(): 
